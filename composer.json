@@ -1,0 +1,26 @@
+{
+    "name": "stonewave/module-returnform",
+    "description": "Return Form Module",
+    "type": "magento2-module",
+    "version": "1.0.0",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Stonewave",
+            "email": "team@stonewave.net",
+            "homepage": "https://www.stonewave.net/"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": "~7.4.0"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Stonewave\\ReturnForm\\": ""
+        }
+    }
+}

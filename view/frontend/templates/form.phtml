@@ -1,0 +1,74 @@
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <?php echo $block->getContent(); ?>
+        </div>
+        <div class="col-12">
+            <form class="form" id="returns-form" data-hasrequired="<?php /* @escapeNotVerified */ echo __('* Required Fields') ?>" data-mage-init='{"validation":{}}'>
+                <div class="row">
+                    <div class="sw-messages d-flex flex-column"></div>
+                    <div class="col-12 returns-form">
+                        <fieldset class="fieldset">
+                            <div class="d-inline-block col-12 col-md-6 form-group field required">
+                                <label class="label" for="order_id"><?= __('Order Id') ?></label>
+                                <input type="text" class="form-control required-entry" id="order_id" name="order_id" data-validate='{"required":true}'>
+                            </div>
+                            <div class="d-inline-block col-12 col-md-6 form-group field required">
+                                <label class="label" for="name"><?= __('Full Name') ?></label>
+                                <input type="text" class="form-control required-entry" id="name" name="name" data-validate='{"required":true}'>
+                            </div>
+                            <div class="d-inline-block col-12 col-md-6 form-group field">
+                                <label class="label" for="email"><?= __('Client Email') ?></label>
+                                <input type="text" class="form-control" id="email" name="email" data-validate='{"validate-email":true}'>
+                            </div>
+                            <div class="d-inline-block col-12 col-md-6 form-group field required">
+                                <label class="label" for="phone"><?= __('Phone') ?></label>
+                                <input type="number" class="form-control" id="phone" name="phone" data-validate='{"required":true}'>
+                            </div>
+                            <div class="col-12 form-group field required">
+                                <label class="label" for="reason"><?= __('Return reason') ?></label>
+                                <select type="text" class="form-control" id="reason" name="reason" data-validate='{"required":true}'>
+                                    <option value="" disabled selected hidden><?= __('Choose a reason') ?></option>
+                                    <?php if (!empty($block->getReason())) : ?>
+                                        <?php
+                                        foreach ($block->getReason() as $key => $reason) :
+                                        ?>
+                                            <option value="<?= $reason['reason'] ?>"><?= $reason['reason'] ?></option>
+                                    <?php
+                                        endforeach;
+                                    endif;
+                                    ?>
+
+                                </select>
+                            </div>
+                            <div class="col-12 form-group field">
+                                <label class="label" for="comment"><?= __('Comment') ?></label>
+                                <textarea class="form-control" id="comment" name="comment"></textarea>
+                            </div>
+                        </fieldset>
+                        <div class="col-12 primary mt-5">
+                            <input type="hidden" name="hideit" id="hideit" value="" />
+                            <input type="hidden" name="form_key" value="<?php echo $block->getFormKey() ?>" />
+                            <button type="button" class="action submit btn btn-secondary" id="returns-form-submit-button" disabled><?= __('SEND') ?></button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+	.cms-returns .chosen-container .chosen-results li{
+		font-size:14px;
+	}
+</style>
+
+<script type="text/x-magento-init">
+    {
+		"#returns-form": {
+			"Stonewave_ReturnForm/js/returns-form-handle": {}
+		}
+
+	}
+</script>

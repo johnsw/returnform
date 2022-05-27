@@ -1,0 +1,23 @@
+.returns-index-index{
+    #maincontent{
+        .columns {
+            max-width: 930px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 100px;
+        }
+
+        .chosen-container{
+            padding: 0 9px;
+            background: #ffffff;
+            background-clip: padding-box;
+            border: 1px solid #c2c2c2;
+            border-radius: 1px;
+        }
+        
+        .page-title-wrapper{
+            text-align: center!important;
+            margin-bottom: 100px;
+        }
+    }
+}

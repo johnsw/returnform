@@ -1,0 +1,20 @@
+{
+    "name": "module-returnform",
+    "version": "1.0.0",
+    "description": "Return Form Module",
+    "main": "index.js",
+    "dependencies": {},
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/johnsw/returnform.git"
+    },
+    "authors": [
+      {
+        "name": "Stonewave Team",
+        "email": "team@stonewave.net"
+      }
+    ],
+    "license": "MIT",
+    "homepage": "https://github.com/johnsw/returnform"
+  }
+  

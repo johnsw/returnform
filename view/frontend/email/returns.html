@@ -1,0 +1,38 @@
+<!--@subject Returns Form @-->
+
+{{template config_path="design/email/header_template"}}
+
+<table>
+    <tr class="email-intro">
+        <td>
+            Email: {{var email}}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Order id: {{var order_id}}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Name: {{var name}}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Telephone: {{var telephone}}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Return reason: {{var reason}}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Comment: {{var comment}}
+        </td>
+    </tr>
+</table>
+
+{{template config_path="design/email/footer_template"}}
