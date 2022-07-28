@@ -19,5 +19,29 @@
             text-align: center!important;
             margin-bottom: 100px;
         }
+
+        #returns-form{
+
+            input[type="text"]{
+                height: 50px !important;
+            }
+
+            input[type="number"]{
+                height: 50px !important;
+            }
+
+            .swreason .chosen-container .chosen-drop{
+                left: 0px;
+            }
+
+            .swreason .chosen-container .chosen-results li.disabled-result{
+               justify-content: left;
+            }
+            .swreason .chosen-container .chosen-results  li.active-result{
+                justify-content: left;
+            }
+
+        }
+
     }
 }

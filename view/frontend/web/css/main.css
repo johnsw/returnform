@@ -15,4 +15,23 @@
   text-align: center !important;
   margin-bottom: 100px; }
 
+.returns-index-index #maincontent #returns-form input[type="text"] {
+  height: 50px !important; }
+
+.returns-index-index #maincontent #returns-form input[type="number"] {
+  height: 50px !important; }
+
+.returns-index-index #maincontent #returns-form .swreason .chosen-container .chosen-drop {
+  left: 0px; }
+
+.returns-index-index #maincontent #returns-form .swreason .chosen-container .chosen-results li.disabled-result {
+  -webkit-box-pack: left;
+  -ms-flex-pack: left;
+  justify-content: left; }
+
+.returns-index-index #maincontent #returns-form .swreason .chosen-container .chosen-results li.active-result {
+  -webkit-box-pack: left;
+  -ms-flex-pack: left;
+  justify-content: left; }
+
 /*# sourceMappingURL=main.css.map */
