@@ -31,5 +31,9 @@ class Returns extends \Magento\Framework\View\Element\Template
     public function getContent() {
         return $this->scopeConfig->getValue('return_form_configuration/settings/description', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
+
+    public function getOrderItems(){
+        return $this->getUrl('returns/data/items');
+    }
 }
  

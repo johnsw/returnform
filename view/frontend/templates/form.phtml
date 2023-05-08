@@ -13,7 +13,17 @@
                                 <label class="label" for="order_id"><?= __('Order Id') ?></label>
                                 <input type="text" class="form-control required-entry" id="order_id" name="order_id" data-validate='{"required":true}'>
                             </div>
+
                             <div class="d-inline-block col-12 col-md-6 form-group field required">
+                                <div class="control">
+                                    <select id="products" name="products[]" class="custom-select" multiple data-validate="{required:true}">
+                                        <option value="" disabled selected hidden><?= __('Choose Products') ?></option>
+                                        
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="d-inline-block col-12 form-group field required">
                                 <label class="label" for="name"><?= __('Full Name') ?></label>
                                 <input type="text" class="form-control required-entry" id="name" name="name" data-validate='{"required":true}'>
                             </div>
@@ -25,6 +35,7 @@
                                 <label class="label" for="phone"><?= __('Phone') ?></label>
                                 <input type="number" class="form-control" id="phone" name="phone" data-validate='{"required":true}'>
                             </div>
+
                             <div class="col-12 form-group field required swreason">
                                 <label class="label" for="reason"><?= __('Return reason') ?></label>
                                 <select type="text" class="form-control" id="reason" name="reason" data-validate='{"required":true}'>
@@ -41,9 +52,58 @@
 
                                 </select>
                             </div>
+
                             <div class="col-12 form-group field">
                                 <label class="label" for="comment"><?= __('Comment') ?></label>
                                 <textarea class="form-control" id="comment" name="comment"></textarea>
+                            </div>
+                            <div class="col-12 form-group field">
+                                <label class="label" for="comment2"><?= __('Comment for curier') ?></label>
+                                <textarea class="form-control" id="comment2" name="comment2"></textarea>
+                            </div>
+                            
+                            <div class="col-12 form-group field return_type">
+                                <label class="label" for="type"><?= __('Money Return') ?></label>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input name="type" id="type_0" checked type="radio" class="custom-control-input" value="no"> 
+                                    <label for="type_0" class="custom-control-label"><?php echo __('No'); ?></label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input name="type" id="type_1" type="radio" class="custom-control-input" value="yes"> 
+                                    <label for="type_1" class="custom-control-label"><?php echo __('Yes'); ?></label>
+                                </div>   
+                            </div>
+                            
+                            <div class="d-inline-block col-12 col-md-4 form-group field return-money" style="display:none!important;">
+                                <label class="iban" for="iban"><?= __('IBAN') ?></label>
+                                <input type="number" class="form-control" placeholder="GR" id="iban" name="iban">
+                            </div>
+                            
+                            <div class="d-inline-block col-12 col-md-4 form-group field return-money" style="display:none!important;">
+                                <label class="label" for="cardholder"><?= __('Cardholder Name') ?></label>
+                                <input type="text" class="form-control" id="cardholder" name="cardholder">
+                            </div>
+
+                            <div class="col-12 col-md-4 form-group field return-money" style="display:none!important;">
+                                <label class="label" for="bank"><?= __('Choose a Bank') ?></label>
+                                <select type="text" class="form-control" id="bank" name="bank">
+                                    <option value=" " disabled selected><?= __('Choose a Bank') ?></option>
+                                    <option value="Εθνική Τράπεζα"><?= __('Εθνική Τράπεζα') ?></option>
+                                    <option value="Eurobank"><?= __('Eurobank') ?></option>
+                                    <option value="Alpha Bank"><?= __('Alpha Bank') ?></option>
+                                    <option value="Τράπεζα Πειραιώς"><?= __('Τράπεζα Πειραιώς') ?></option>
+                                    <option value="other"><?= __('Άλλη τράπεζα (συμπληρώστε στα σχόλια)') ?></option>
+                                </select>
+                            </div>
+
+                            <div class="d-inline-block col-12 form-group field return-money-other" style="display:none!important;">
+                                <label class="label" for="other-bank"><?= __('Bank Name Specify') ?></label>
+                                <input type="text" class="form-control" id="other-bank" name="other-bank">
+                            </div>
+                                    
+                            <div class="col-12 form-group field">
+                                <label class="label" for="image"><?= __('Upload Image if needed') ?></label>
+                                <input id="file-cv-input" type="file" name="files[cv]">
                             </div>
                         </fieldset>
                         <div class="col-12 primary mt-5">
@@ -59,9 +119,9 @@
 </div>
 
 <style>
-	.cms-returns .chosen-container .chosen-results li{
-		font-size:14px;
-	}
+    .cms-returns .chosen-container .chosen-results li {
+        font-size: 14px;
+    }
 </style>
 
 <script type="text/x-magento-init">
@@ -71,4 +131,106 @@
 		}
 
 	}
+</script>
+
+<script type="text/javascript">
+    
+    require([
+        'Magento_Ui/js/modal/modal',
+        'jquery',
+        'chosen',
+        'domReady!',
+        'loader',
+        'mage/validation',
+        'mage/translate'
+    ], function(modal, $, chosen) {
+        'use strict';
+
+        
+        var selected = [];
+
+        $('input[type="text"]').attr('disabled',true);
+        $('input[type="number"]').attr('disabled',true);
+        $('textarea').attr('disabled',true);
+
+        $('#order_id').attr('disabled',false);
+
+        $('#reason').prop('disabled',true).trigger("chosen:updated");
+        $('#products').prop('disabled',true).trigger("chosen:updated");
+
+        $('.return_type input').attr('disabled',true);
+
+        $('body').on('change','.return_type input[type=radio]', function() {
+            if ($('.return_type input[type=radio]:checked').val() == 'yes') {
+                console.log('ere');
+                $('.return-money').attr('style','display:inline-block!important');
+            }else{                
+                console.log('tere');
+                $('.return-money').attr('style','display:none!important');
+            }
+        });
+
+        $('body').on('change','#bank', function() {
+            if ($(this).val() == 'other') {
+                console.log('ere');
+                $('.return-money-other').attr('style','display:inline-block!important');
+            }else{                
+                console.log('tere');
+                $('.return-money-other').attr('style','display:none!important');
+            }
+        });
+
+        $('body').on('change', '#order_id', function() {
+
+            console.log('axas');
+
+            $('#products').html();
+            $('#products').trigger("chosen:updated");
+
+            $.ajax({
+                showLoader  : true,
+                type        : "POST",
+                data        :   {
+                                    order_id : $(this).val(),
+                                },                
+                url         : "<?php echo $block->getOrderItems() ?>",
+                success     : function(result) {
+                    
+                    if( result.success ){
+                        console.log('here');
+
+                        var items = result.data;
+
+                        $.each(items, function (i, item) {
+                            $('#products').append($('<option>', { 
+                                value: item.sku,
+                                text : item.sku 
+                            }));
+                        });
+
+                        $('input[type="text"]').attr('disabled',false);
+                        $('input[type="number"]').attr('disabled',false);
+                        $('textarea').attr('disabled',false);
+                        $('#reason').prop('disabled',false).trigger("chosen:updated");
+                        $('#products').prop('disabled',false).trigger("chosen:updated");
+                        $('.return_type input').attr('disabled',false);
+
+                    }else{
+                        console.log('there');
+                        showMessage($.mage.__('Please enter a valid order number.'), 'error')    
+                    }
+
+                },error: function(xhr, status, error){
+                    showMessage($.mage.__('Please enter a valid order number.'), 'error')
+                },
+            })
+            
+        });
+
+        function showMessage(message, type) {
+            $('.sw-messages').html('');
+            $('.sw-messages').append(`<div class='alert alert-${type}' role='alert'>${message}</div>`);
+        }
+
+    });
 </script>

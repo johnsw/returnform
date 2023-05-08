@@ -14,6 +14,8 @@ use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Message\ManagerInterface;
+use PDO;
+use Stonewave\ReturnForm\Model\Returns as ReturnsModel;
 
 class Returns extends Action
 {
@@ -31,6 +33,8 @@ class Returns extends Action
 
     protected $messageManager;
 
+    protected $return;
+
     public function __construct(
         Context $context,
         PageFactory $pageFactory,
@@ -39,7 +43,8 @@ class Returns extends Action
         StateInterface $inlineTranslation,
         TransportBuilder $transportBuilder,
         StoreManagerInterface $storeManager,
-        ManagerInterface $messageManager
+        ManagerInterface $messageManager,
+        ReturnsModel $return
     )
     {
         parent::__construct($context);
@@ -50,26 +55,47 @@ class Returns extends Action
         $this->transportBuilder = $transportBuilder;
         $this->storeManager = $storeManager;
         $this->messageManager = $messageManager;
+        $this->return = $return;
     }
 
     public function execute()
     {
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/returns-email-failure.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-
         /** Validate Form */
         if (!$this->formKeyValidator->validate($this->getRequest())) {
-            $logger->info(__('Invalid form key'));
-            $logger->info(json_encode($this->getRequest()->getParams()));
-            $response= ['success' => false, 'error' => __('Something went wrong. Please try again later.')];
+            $response = ['success' => false, 'error' => __('Something went wrong. Please try again later.')];
             return $this->redirectBack($response);
+        }
+
+        $params = $this->getRequest()->getParams();
+
+        // echo "<pre>";print_r($params);echo "</pre>";die;
+
+        try{
+
+
+            $this->return->setData([
+                'order_id'           => $params['order_id'],
+                'full_name'          => $params['name'],
+                'email'              => $params['email'],
+                'phone'              => $params['phone'],
+                'reason'             => $params['reason'],
+                'commend'            => $params['comment'],
+                'commend2'           => $params['comment2'],
+                'products'           => implode(",",$params['products']),
+                'money_return'       => $params['type'],
+                'money_return_infos' => $params['iban'].' '.$params['cardholder'].' '.$params['bank'].' '.$params['other-bank']
+            ]);
+
+            $this->return->save();
+
+            $url = $this->_url->getUrl('returns/form/success').'/'.$this->return->getId();
+
+        }catch(\Exception $e){
+            echo $e->getMessage();die;
         }
 
         /** Send email code here */
         try {
-            $params = $this->getRequest()->getParams();
-
             $data = [
                 'templateId' => 'returns_email_template',
                 'from' => [
@@ -85,27 +111,18 @@ class Returns extends Action
                     'telephone' => $params['phone'],
                     'order_id' => $params['order_id'],
                     'comment'  => $params['comment'],
+                    'comment2'  => $params['comment2'],
                     'reason'  => $params['reason'],
                     'name'  => $params['name']
                 ]
             ];
+            
             $this->sendEmail($data);
-            $response= ['success' => true];
+
+            $response = ['success' => true, 'data' => [ 'redirect' => $url ]];
         } catch (\Exception $e) {
+            echo $e->getMessage();die;
             $response= ['success' => false, 'Error' => __('Something went wrong. Please try again later.')];
-            $logger->info(
-                print_r(
-                    [
-                        'Exception' => [
-                            'message' => $e->getMessage(),
-                            'code' => $e->getCode(),
-                            'line' => $e->getLine(),
-                            'file' => $e->getFile(),
-                            'trace' => $e->getTraceAsString(),
-                        ]
-                    ], TRUE
-                )
-            );
         }
 
         return $this->redirectBack($response);

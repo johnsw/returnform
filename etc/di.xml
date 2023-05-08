@@ -1,0 +1,17 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="returns_grid_data_source"
+                    xsi:type="string">Stonewave\ReturnForm\Model\ResourceModel\Returns\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <virtualType name="Stonewave\ReturnForm\Model\ResourceModel\Return\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">sw_returns</argument>
+            <argument name="resourceModel" xsi:type="string">Stonewave\ReturnForm\Model\ResourceModel\Returns</argument>
+        </arguments>
+    </virtualType>
+</config>

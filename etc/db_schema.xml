@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="sw_returns" resource="default" engine="innodb" comment="Stonewave Return form">
+        <column xsi:type="int" name="id" unsigned="true" nullable="false" identity="true" comment="Entity ID"/>
+        <column xsi:type="varchar" name="order_id" nullable="true" length="255" comment="Order ID"/>
+        <column xsi:type="varchar" name="full_name" nullable="true" length="255" comment="Full Name"/>
+        <column xsi:type="varchar" name="email"  nullable="true" length="255" comment="User Name"/>
+        <column xsi:type="varchar" name="phone"  nullable="true" length="255" comment="User Phone"/>
+
+        <column xsi:type="varchar" name="reason"  nullable="true" length="255" comment="Return Reason"/>
+        <!-- <column xsi:type="varchar" name="action"  nullable="true" length="255" comment="Return action"/> -->
+
+        <column xsi:type="varchar" name="commend"  nullable="true" length="255"/>
+        <column xsi:type="varchar" name="commend2"  nullable="true" length="255"/>
+        <column xsi:type="varchar" name="curier_commend"  nullable="true" length="255"/>
+
+        <column xsi:type="varchar" name="products"  nullable="true" length="255"/>
+        <column xsi:type="varchar" name="money_return"  nullable="true" length="255"/>
+
+        <column xsi:type="varchar" name="money_return_infos"  nullable="true" length="255"/>
+
+        <column xsi:type="varchar" name="image"  nullable="true" length="255"/>
+
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="true" default="CURRENT_TIMESTAMP" comment="Creation Time"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="true" default="CURRENT_TIMESTAMP" comment="Modification Time"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+    </table>
+</schema>

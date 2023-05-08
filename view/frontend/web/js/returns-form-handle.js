@@ -42,7 +42,9 @@ require(
                 success: function(data,status,xhr){
                     dataForm[0].reset();
                     if (data.success) {
-                        // showMessage($.mage.__('You have succesfully sent your message.'), 'success');
+                        $('.returns-form').hide();    
+                        showMessage($.mage.__('You have succesfully sent your message.'), 'success');
+                        window.location.href = data.data.redirect;
                     } else {
                         showMessage(data.error, 'error');
                     }
@@ -63,7 +65,11 @@ require(
         }
 
 
-        $('#returns-form select').chosen({
+        // $('#returns-form select').chosen({
+        //     disable_search: true
+        // });
+        
+        $('#reason').chosen({
             disable_search: true
         });
 
