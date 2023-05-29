@@ -1,6 +1,6 @@
 {
     "name": "module-returnform",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Return Form Module",
     "main": "index.js",
     "dependencies": {},
@@ -17,4 +17,3 @@
     "license": "MIT",
     "homepage": "https://github.com/johnsw/returnform"
   }
-  

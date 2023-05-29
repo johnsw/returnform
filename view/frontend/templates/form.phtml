@@ -9,18 +9,13 @@
                     <div class="sw-messages d-flex flex-column"></div>
                     <div class="col-12 returns-form">
                         <fieldset class="fieldset">
-                            <div class="d-inline-block col-12 col-md-6 form-group field required">
+                            <div class="d-inline-block col-12 form-group field required">
                                 <label class="label" for="order_id"><?= __('Order Id') ?></label>
                                 <input type="text" class="form-control required-entry" id="order_id" name="order_id" data-validate='{"required":true}'>
                             </div>
 
-                            <div class="d-inline-block col-12 col-md-6 form-group field required">
-                                <div class="control">
-                                    <select id="products" name="products[]" class="custom-select" multiple data-validate="{required:true}">
-                                        <option value="" disabled selected hidden><?= __('Choose Products') ?></option>
-                                        
-                                    </select>
-                                </div>
+                            <div class="d-inline-block col-12 form-group field required products">
+                                
                             </div>
 
                             <div class="d-inline-block col-12 form-group field required">
@@ -58,7 +53,7 @@
                                 <textarea class="form-control" id="comment" name="comment"></textarea>
                             </div>
                             <div class="col-12 form-group field">
-                                <label class="label" for="comment2"><?= __('Comment for curier') ?></label>
+                                <label class="label" for="comment2"><?= __('Comment for courier') ?></label>
                                 <textarea class="form-control" id="comment2" name="comment2"></textarea>
                             </div>
                             
@@ -70,7 +65,7 @@
                                 </div>
                                 <div class="custom-control custom-radio custom-control-inline">
                                     <input name="type" id="type_1" type="radio" class="custom-control-input" value="yes"> 
-                                    <label for="type_1" class="custom-control-label"><?php echo __('Yes'); ?></label>
+                                    <label for="type_1" class="custom-control-label"><?php echo __('Yes '); ?></label>
                                 </div>   
                             </div>
                             
@@ -80,7 +75,7 @@
                             </div>
                             
                             <div class="d-inline-block col-12 col-md-4 form-group field return-money" style="display:none!important;">
-                                <label class="label" for="cardholder"><?= __('Cardholder Name') ?></label>
+                                <label class="label" for="cardholder"><?= __('Account Holder') ?></label>
                                 <input type="text" class="form-control" id="cardholder" name="cardholder">
                             </div>
 
@@ -156,7 +151,6 @@
         $('#order_id').attr('disabled',false);
 
         $('#reason').prop('disabled',true).trigger("chosen:updated");
-        $('#products').prop('disabled',true).trigger("chosen:updated");
 
         $('.return_type input').attr('disabled',true);
 
@@ -184,9 +178,8 @@
 
             console.log('axas');
 
-            $('#products').html();
-            $('#products').trigger("chosen:updated");
-
+            $('.products').empty();
+            
             $.ajax({
                 showLoader  : true,
                 type        : "POST",
@@ -202,17 +195,21 @@
                         var items = result.data;
 
                         $.each(items, function (i, item) {
-                            $('#products').append($('<option>', { 
-                                value: item.sku,
-                                text : item.sku 
-                            }));
+                            $('.products').append(
+                                `
+                                    <div class="custom-control custom-checkbox">
+                                        <input class="custom-control-input" name="products[]" value="`+item.sku+`" type="checkbox" id="product-id-`+item.id+`">
+                                        <label class="custom-control-label" for="product-id-`+item.id+`">`+item.sku+`</label>
+                                    </div>
+                                `
+                            );
                         });
 
                         $('input[type="text"]').attr('disabled',false);
                         $('input[type="number"]').attr('disabled',false);
                         $('textarea').attr('disabled',false);
                         $('#reason').prop('disabled',false).trigger("chosen:updated");
-                        $('#products').prop('disabled',false).trigger("chosen:updated");
+                        $('.products').prop('disabled',false).trigger("chosen:updated");
                         $('.return_type input').attr('disabled',false);
 
                     }else{
