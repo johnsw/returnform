@@ -1,6 +1,6 @@
 {
     "name": "module-returnform",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "Return Form Module",
     "main": "index.js",
     "dependencies": {},
