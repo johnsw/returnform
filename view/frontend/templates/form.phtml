@@ -15,7 +15,7 @@
                             </div>
 
                             <div class="d-inline-block col-12 form-group field required products">
-                                
+
                             </div>
 
                             <div class="d-inline-block col-12 form-group field required">
@@ -56,24 +56,24 @@
                                 <label class="label" for="comment2"><?= __('Comment for courier') ?></label>
                                 <textarea class="form-control" id="comment2" name="comment2"></textarea>
                             </div>
-                            
+
                             <div class="col-12 form-group field return_type">
                                 <label class="label" for="type"><?= __('Money Return') ?></label>
                                 <div class="custom-control custom-radio custom-control-inline">
-                                    <input name="type" id="type_0" checked type="radio" class="custom-control-input" value="no"> 
+                                    <input name="type" id="type_0" checked type="radio" class="custom-control-input" value="no">
                                     <label for="type_0" class="custom-control-label"><?php echo __('No'); ?></label>
                                 </div>
                                 <div class="custom-control custom-radio custom-control-inline">
-                                    <input name="type" id="type_1" type="radio" class="custom-control-input" value="yes"> 
+                                    <input name="type" id="type_1" type="radio" class="custom-control-input" value="yes">
                                     <label for="type_1" class="custom-control-label"><?php echo __('Yes '); ?></label>
-                                </div>   
+                                </div>
                             </div>
-                            
+
                             <div class="d-inline-block col-12 col-md-4 form-group field return-money" style="display:none!important;">
                                 <label class="iban" for="iban"><?= __('IBAN') ?></label>
                                 <input type="number" class="form-control" placeholder="GR" id="iban" name="iban">
                             </div>
-                            
+
                             <div class="d-inline-block col-12 col-md-4 form-group field return-money" style="display:none!important;">
                                 <label class="label" for="cardholder"><?= __('Account Holder') ?></label>
                                 <input type="text" class="form-control" id="cardholder" name="cardholder">
@@ -95,9 +95,9 @@
                                 <label class="label" for="other-bank"><?= __('Bank Name Specify') ?></label>
                                 <input type="text" class="form-control" id="other-bank" name="other-bank">
                             </div>
-                                    
-                            <div class="col-12 form-group field">
-                                <label class="label" for="image"><?= __('Upload Image if needed') ?></label>
+
+                            <div class="col-12 form-group field return-file">
+                                <label class="col-12 label" for="image"><?= __('Upload Image if needed') ?></label>
                                 <input id="file-cv-input" type="file" name="files[cv]">
                             </div>
                         </fieldset>
@@ -129,7 +129,7 @@
 </script>
 
 <script type="text/javascript">
-    
+
     require([
         'Magento_Ui/js/modal/modal',
         'jquery',
@@ -141,7 +141,7 @@
     ], function(modal, $, chosen) {
         'use strict';
 
-        
+
         var selected = [];
 
         $('input[type="text"]').attr('disabled',true);
@@ -158,7 +158,7 @@
             if ($('.return_type input[type=radio]:checked').val() == 'yes') {
                 console.log('ere');
                 $('.return-money').attr('style','display:inline-block!important');
-            }else{                
+            }else{
                 console.log('tere');
                 $('.return-money').attr('style','display:none!important');
             }
@@ -168,7 +168,7 @@
             if ($(this).val() == 'other') {
                 console.log('ere');
                 $('.return-money-other').attr('style','display:inline-block!important');
-            }else{                
+            }else{
                 console.log('tere');
                 $('.return-money-other').attr('style','display:none!important');
             }
@@ -179,16 +179,16 @@
             console.log('axas');
 
             $('.products').empty();
-            
+
             $.ajax({
                 showLoader  : true,
                 type        : "POST",
                 data        :   {
                                     order_id : $(this).val(),
-                                },                
+                                },
                 url         : "<?php echo $block->getOrderItems() ?>",
                 success     : function(result) {
-                    
+
                     if( result.success ){
                         console.log('here');
 
@@ -214,14 +214,14 @@
 
                     }else{
                         console.log('there');
-                        showMessage($.mage.__('Please enter a valid order number.'), 'error')    
+                        showMessage($.mage.__('Please enter a valid order number.'), 'error')
                     }
 
                 },error: function(xhr, status, error){
                     showMessage($.mage.__('Please enter a valid order number.'), 'error')
                 },
             })
-            
+
         });
 
         function showMessage(message, type) {

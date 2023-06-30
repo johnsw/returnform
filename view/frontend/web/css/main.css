@@ -34,4 +34,10 @@
   -ms-flex-pack: left;
   justify-content: left; }
 
+.returns-index-index #maincontent #returns-form .return-file label {
+  padding: 0; }
+
+.returns-index-index #maincontent #returns-form .return-file input {
+  max-width: 340px !important; }
+
 /*# sourceMappingURL=main.css.map */
