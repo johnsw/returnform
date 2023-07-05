@@ -83,7 +83,7 @@ class Returns extends Action
                 'commend2'           => $params['comment2'],
                 'products'           => implode(",",$params['products']),
                 'money_return'       => $params['type'],
-                'money_return_infos' => $params['iban'].' '.$params['cardholder'].' '.$params['bank'].' '.$params['other-bank']
+                'money_return_infos' => $params['iban'] ? $params['iban'].' '.$params['cardholder'].' '.$params['bank'].' '.$params['other-bank'] : null
             ]);
 
             $this->return->save();
@@ -116,7 +116,7 @@ class Returns extends Action
                     'name'  => $params['name']
                 ]
             ];
-            
+
             $this->sendEmail($data);
 
             $response = ['success' => true, 'data' => [ 'redirect' => $url ]];
