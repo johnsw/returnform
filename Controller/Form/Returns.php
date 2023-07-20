@@ -16,6 +16,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Message\ManagerInterface;
 use PDO;
 use Stonewave\ReturnForm\Model\Returns as ReturnsModel;
+use Magento\Framework\App\Filesystem\DirectoryList;
 
 class Returns extends Action
 {
@@ -35,6 +36,10 @@ class Returns extends Action
 
     protected $return;
 
+    protected $uploaderFactory;
+    protected $adapterFactory;
+    protected $filesystem;
+
     public function __construct(
         Context $context,
         PageFactory $pageFactory,
@@ -44,7 +49,10 @@ class Returns extends Action
         TransportBuilder $transportBuilder,
         StoreManagerInterface $storeManager,
         ManagerInterface $messageManager,
-        ReturnsModel $return
+        ReturnsModel $return,
+        \Magento\MediaStorage\Model\File\UploaderFactory $uploaderFactory,
+        \Magento\Framework\Image\AdapterFactory $adapterFactory,
+        \Magento\Framework\Filesystem $filesystem
     )
     {
         parent::__construct($context);
@@ -56,6 +64,9 @@ class Returns extends Action
         $this->storeManager = $storeManager;
         $this->messageManager = $messageManager;
         $this->return = $return;
+        $this->uploaderFactory = $uploaderFactory;
+        $this->adapterFactory = $adapterFactory;
+        $this->filesystem = $filesystem;
     }
 
     public function execute()
@@ -67,11 +78,37 @@ class Returns extends Action
         }
 
         $params = $this->getRequest()->getParams();
+        
+        $fileup = $this->getRequest()->getFiles('file-cv-input');
+        $File_upoad = '';
 
-        // echo "<pre>";print_r($params);echo "</pre>";die;
+        try {
+            $uploaderFactory = $this->uploaderFactory->create(['fileId' => 'file-cv-input']); 
+            $uploaderFactory->setAllowedExtensions(['jpg', 'png','jpeg']); // you can add more extension which need
+            $fileAdapter = $this->adapterFactory->create();
+            $uploaderFactory->setAllowRenameFiles(true);
+            // $uploaderFactory->setFilesDispersion(true);
+            $mediaDirectory = $this->filesystem->getDirectoryRead(DirectoryList::MEDIA);
+            $destinationPath = $mediaDirectory->getAbsolutePath('RMA');
+            $result = $uploaderFactory->save($destinationPath);
+            if (!$result) {
+                throw new LocalizedException(
+                    __('File cannot be saved to path: $1', $destinationPath)
+                );
+            }
+            // save file name 
+            $File_upoad = $result['file'];
+        }  catch (\Exception $e) {
+            $this->messageManager->addError(__('File not Uplaoded, Please try Agrain'));
+        }
+
+        if( array_key_exists('pproduct',$params) ){
+            $prods = implode(",",$params['products']);
+        }else{
+            $prods = '';
+        }
 
         try{
-
 
             $this->return->setData([
                 'order_id'           => $params['order_id'],
@@ -81,8 +118,9 @@ class Returns extends Action
                 'reason'             => $params['reason'],
                 'commend'            => $params['comment'],
                 'commend2'           => $params['comment2'],
-                'products'           => implode(",",$params['products']),
+                'products'           => $prods,
                 'money_return'       => $params['type'],
+                'image'              => $File_upoad,
                 'money_return_infos' => $params['iban'] ? $params['iban'].' '.$params['cardholder'].' '.$params['bank'].' '.$params['other-bank'] : null
             ]);
 
@@ -162,4 +200,5 @@ class Returns extends Action
         $resultJson->setData($data);
         return $resultJson;
     }
+
 }

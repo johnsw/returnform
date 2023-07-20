@@ -34,12 +34,17 @@ require(
         });
 
         function sendForm(){
+            var formData = new FormData(document.getElementById("returns-form"));
+
             $.ajax({
                 method: "POST",
                 url: "/returns/form/returns",
-                data: dataForm.serialize(),
+                data: formData,
                 showLoader: true,
+                processData: false, //add this
+                contentType: false, //and this
                 success: function(data,status,xhr){
+                    console.log(dataForm);
                     dataForm[0].reset();
                     if (data.success) {
                         $('.returns-form').hide();    

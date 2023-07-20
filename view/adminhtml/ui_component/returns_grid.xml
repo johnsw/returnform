@@ -132,6 +132,14 @@
                 <label translate="true">Return Money Informations</label>
             </settings>
         </column>
+        <column name="image" class="Stonewave\ReturnForm\Ui\Component\Listing\Column\Thumbnail" component="Magento_Ui/js/grid/columns/thumbnail">
+            <settings>
+                <label translate="true">Image</label>
+                <altField>name</altField>
+                <hasPreview>1</hasPreview>
+            </settings>
+        </column>
+
         <!-- <column name="is_active" component="Magento_Ui/js/grid/columns/select">
             <settings>
                 <options class="Magento\Cms\Model\Page\Source\IsActive"/>
