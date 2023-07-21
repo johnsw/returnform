@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Stonewave\Joboffers\Mail\Template;
+namespace Stonewave\ReturnForm\Mail\Template;
 
 use Magento\Framework\App\TemplateTypesInterface;
 use Magento\Framework\Exception\LocalizedException;
