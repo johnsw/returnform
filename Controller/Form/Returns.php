@@ -6,7 +6,7 @@ use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Mail\Template\TransportBuilder;
+use Stonewave\ReturnForm\Mail\Template\TransportBuilder;
 use Magento\Framework\Translate\Inline\StateInterface;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Framework\Controller\ResultFactory;
@@ -151,11 +151,12 @@ class Returns extends Action
                     'comment'  => $params['comment'],
                     'comment2'  => $params['comment2'],
                     'reason'  => $params['reason'],
-                    'name'  => $params['name']
+                    'name'  => $params['name'],
+                    'money_return_infos' => $params['iban'] ? $params['iban'].' '.$params['cardholder'].' '.$params['bank'].' '.$params['other-bank'] : null
                 ]
             ];
 
-            $this->sendEmail($data);
+            $this->sendEmail($data,$fileup);
 
             $response = ['success' => true, 'data' => [ 'redirect' => $url ]];
         } catch (\Exception $e) {
@@ -171,7 +172,7 @@ class Returns extends Action
         return $this->scopeConfig->getValue($path, ScopeInterface::SCOPE_STORE);
     }
 
-    private function sendEmail($data)
+    private function sendEmail($data,$files)
     {
         $this->inlineTranslation->suspend();
 
@@ -187,6 +188,11 @@ class Returns extends Action
             ->setFrom($data['from'])
             ->addTo($data['to']['email'], $data['to']['name'])
             ->getTransport();
+
+        
+        if(!empty($files)){
+            $this->transportBuilder->addAttachment(file_get_contents( $this->filesystem->getDirectoryRead(DirectoryList::MEDIA)->getAbsolutePath('RMA').'/'.$files['name']), $files['name'], $files['type']);
+        }
 
         $transport->sendMessage();
 
