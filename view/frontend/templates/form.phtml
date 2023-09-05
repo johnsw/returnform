@@ -197,9 +197,10 @@
                         $.each(items, function (i, item) {
                             $('.products').append(
                                 `
-                                    <div class="custom-control custom-checkbox">
+                                    <div class="custom-control custom-checkbox d-flex align-items-start">
                                         <input class="custom-control-input" name="products[]" value="`+item.sku+`" type="checkbox" id="product-id-`+item.id+`">
                                         <label class="custom-control-label" for="product-id-`+item.id+`">`+item.sku+`</label>
+                                        <label class="pl-3" for="product-id-`+item.id+`">`+item.name+`</label>
                                     </div>
                                 `
                             );
