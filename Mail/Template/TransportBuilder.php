@@ -449,7 +449,7 @@ class TransportBuilder extends \Magento\Framework\Mail\Template\TransportBuilder
         $attachmentPart->setContent($content)
             ->setType($fileType)
             ->setFileName($fileName)
-            ->setDisposition(Mime::DISPOSITION_ATTACHMENT)
+            // ->setDisposition(Mime::DISPOSITION_ATTACHMENT)
             ->setEncoding(Mime::ENCODING_BASE64);
         $this->attachments[] = $attachmentPart;
 

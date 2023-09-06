@@ -102,7 +102,7 @@ class Returns extends Action
             $this->messageManager->addError(__('File not Uplaoded, Please try Agrain'));
         }
 
-        if( array_key_exists('pproduct',$params) ){
+        if( array_key_exists('products',$params) ){
             $prods = implode(",",$params['products']);
         }else{
             $prods = '';
