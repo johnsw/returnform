@@ -2,7 +2,7 @@
     "name": "stonewave/module-returnform",
     "description": "Return Form Module",
     "type": "magento2-module",
-    "version": "1.0.12",
+    "version": "1.0.13",
     "license": "proprietary",
     "authors": [
         {
