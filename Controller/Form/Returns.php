@@ -18,6 +18,11 @@ use PDO;
 use Stonewave\ReturnForm\Model\Returns as ReturnsModel;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
+use Laminas\Mime\Mime as MimeType;
+use Laminas\Mime\Message as MimeMessage;
+use Laminas\Mime\Part as MimePart;
+use Magento\Framework\Mail\Template\TransportBuilderFactory;
+
 class Returns extends Action
 {
     protected $_pageFactory;
@@ -52,7 +57,8 @@ class Returns extends Action
         ReturnsModel $return,
         \Magento\MediaStorage\Model\File\UploaderFactory $uploaderFactory,
         \Magento\Framework\Image\AdapterFactory $adapterFactory,
-        \Magento\Framework\Filesystem $filesystem
+        \Magento\Framework\Filesystem $filesystem,
+        TransportBuilderFactory $transportBuilderFactory
     )
     {
         parent::__construct($context);
@@ -67,6 +73,7 @@ class Returns extends Action
         $this->uploaderFactory = $uploaderFactory;
         $this->adapterFactory = $adapterFactory;
         $this->filesystem = $filesystem;
+        $this->transportBuilderFactory = $transportBuilderFactory;
     }
 
     public function execute()
@@ -138,7 +145,7 @@ class Returns extends Action
                 'templateId' => 'returns_email_template',
                 'from' => [
                     'name' => $this->getConfigData('trans_email/ident_general/name'),
-                    'email' => $this->getConfigData('return_form_configuration/settings/email')
+                    'email' => $this->getConfigData('trans_email/ident_general/email') 
                 ],
                 'to' => [
                     'email' => $this->getConfigData('return_form_configuration/settings/email'),
@@ -174,9 +181,10 @@ class Returns extends Action
 
     private function sendEmail($data,$files)
     {
-        $this->inlineTranslation->suspend();
+        // $this->inlineTranslationlation->suspend();
 
-        $transport = $this->transportBuilder
+        $transportBuilder = $this->transportBuilderFactory->create();
+        $transportBuilder
             ->setTemplateIdentifier($data['templateId'])
             ->setTemplateOptions(
                 [
@@ -185,20 +193,41 @@ class Returns extends Action
                 ]
             )
             ->setTemplateVars($data['variables'])
-            ->setFrom($data['from'])
-            ->addTo($data['to']['email'], $data['to']['name'])
-            ->getTransport();
+            ->setFromByScope($data['from'], \Magento\Store\Model\Store::DEFAULT_STORE_ID)
+            ->addTo($data['to']['email'], $data['to']['name']);
 
-        
-        if(!empty($files)){
-            $this->transportBuilder->addAttachment(file_get_contents( $this->filesystem->getDirectoryRead(DirectoryList::MEDIA)->getAbsolutePath('RMA').'/'.$files['name']), $files['name'], $files['type']);
+        $transport = $transportBuilder->getTransport();
+
+
+        if(!empty($files) && $files['name'] != '' ){
+            $body = $transport->getMessage()->getBody();
+            if ($body instanceof MimeMessage) {
+                $parts = $body->getParts();
+
+                $attachmentPart = new MimePart();
+                $attachmentPart->setContent(file_get_contents( $this->filesystem->getDirectoryRead(DirectoryList::MEDIA)->getAbsolutePath('RMA').'/'.$files['name']))
+                    ->setType($files['type'])
+                    ->setFileName($files['name'])
+                    ->setDisposition(MimeType::DISPOSITION_ATTACHMENT)
+                    ->setEncoding(MimeType::ENCODING_BASE64);
+                $parts[] = $attachmentPart;
+
+                $message = new MimeMessage();
+                $message->setParts($parts);
+
+                $transport->getMessage()->setBody($message);
+            }
         }
+        
+        // if(!empty($files)){
+        //     $this->transportBuilder->addAttachment(file_get_contents( $this->filesystem->getDirectoryRead(DirectoryList::MEDIA)->getAbsolutePath('RMA').'/'.$files['name']), $files['name'], $files['type']);
+        // }
 
         $transport->sendMessage();
 
-        $this->inlineTranslation->resume();
+        // $this->inlineTranslation->resume();
 
-        $this->messageManager->addSuccessMessage(__('Email sent successfully.'));
+        // $this->messageManager->addSuccessMessage(__('Email sent successfully.'));
     }
 
     private function redirectBack($data){
