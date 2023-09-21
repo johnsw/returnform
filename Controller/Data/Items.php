@@ -28,7 +28,7 @@ class Items extends Action {
         ImageBuilder               $imageBuilder,
         \Magento\Catalog\Api\ProductAttributeRepositoryInterface $attrRepository,
         \Magento\Eav\Api\Data\AttributeOptionInterfaceFactory $optionFactory,
-        \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\Collection $attributeOptionCollection  
+        \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory $attributeOptionCollection  
 	) {
 		parent::__construct($context);
 		$this->resourceConnection = $resourceConnection;
@@ -87,7 +87,7 @@ class Items extends Action {
         $optionFactory = $this->optionFactory->create();
         $optionFactory->load($optionValue); // load by option value
         $attributeId = $optionFactory->getAttributeId(); // atribute id of given option value
-        $optionData = $this->attributeOptionCollection
+        $optionData = $this->attributeOptionCollection->create()
                         ->setPositionOrder('asc')
                         ->setAttributeFilter($attributeId)
                         ->setIdFilter($optionValue)
