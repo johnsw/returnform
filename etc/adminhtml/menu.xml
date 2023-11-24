@@ -5,7 +5,7 @@
             id="Stonewave_ReturnForm::main"
             title="Return Form"
             module="Stonewave_ReturnForm"
-            sortOrder="50"
+            sortOrder="430"
             resource="Stonewave_ReturnForm::main"
             dependsOnModule="Stonewave_All"
             parent="Stonewave_All::stonewave_all"
