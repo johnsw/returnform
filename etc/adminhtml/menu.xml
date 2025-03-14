@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add
+            id="Stonewave_ReturnForm::main"
+            title="Return Form"
+            module="Stonewave_ReturnForm"
+            sortOrder="430"
+            resource="Stonewave_ReturnForm::main"
+            dependsOnModule="Stonewave_All"
+            parent="Stonewave_All::stonewave_all"
+        />
+        <add
+            id="Stonewave_ReturnForm::grid"
+            title="Grid"
+            module="Stonewave_ReturnForm"
+            sortOrder="10"
+            dependsOnModule="Stonewave_ReturnForm"
+            action="returns/returns/index"
+            resource="Stonewave_ReturnForm::grid"
+            parent="Stonewave_ReturnForm::main"
+        />
+
+        <add
+            id="Stonewave_ReturnForm::configuration"
+            title="Settings"
+            resource="Stonewave_ReturnForm::configuration"
+            parent="Stonewave_ReturnForm::main"
+            sortOrder="20"
+            module="Stonewave_ReturnForm"
+            dependsOnModule="Stonewave_ReturnForm"
+            action="adminhtml/system_config/edit/section/return_form_configuration"
+        />
+
+    </menu>
+</config>

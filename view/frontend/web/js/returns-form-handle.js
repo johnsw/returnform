@@ -34,15 +34,22 @@ require(
         });
 
         function sendForm(){
+            var formData = new FormData(document.getElementById("returns-form"));
+
             $.ajax({
                 method: "POST",
                 url: "/returns/form/returns",
-                data: dataForm.serialize(),
+                data: formData,
                 showLoader: true,
+                processData: false, //add this
+                contentType: false, //and this
                 success: function(data,status,xhr){
+                    console.log(dataForm);
                     dataForm[0].reset();
                     if (data.success) {
-                        // showMessage($.mage.__('You have succesfully sent your message.'), 'success');
+                        $('.returns-form').hide();    
+                        showMessage($.mage.__('You have succesfully sent your message.'), 'success');
+                        window.location.href = data.data.redirect;
                     } else {
                         showMessage(data.error, 'error');
                     }
@@ -63,7 +70,11 @@ require(
         }
 
 
-        $('#returns-form select').chosen({
+        // $('#returns-form select').chosen({
+        //     disable_search: true
+        // });
+        
+        $('#reason').chosen({
             disable_search: true
         });
 

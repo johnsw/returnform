@@ -6,6 +6,7 @@
                 <resource id="Stonewave_All::stonewave_all">
                     <resource id="Stonewave_ReturnForm::main" title="Return Form" sortOrder="100">
                         <resource id="Stonewave_ReturnForm::configuration" title="Configuration" sortOrder="20"/>
+                        <resource id="Stonewave_ReturnForm::grid" title="Grid" sortOrder="10"/>
                     </resource>
                 </resource>
             </resource>
