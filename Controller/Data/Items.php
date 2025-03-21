@@ -63,7 +63,7 @@ class Items extends Action {
                 'sku'      => $item->getSku(),
                 'name'     => $item->getName(),
                 'fullname' => $this->getFullTitle($item),
-                'image'    => $this->getProductImage($this->productRepository->getById($item->getProductId()), 'sw_giftwrap'),
+                //'image'    => $this->getProductImage($this->productRepository->getById($item->getProductId()), 'sw_giftwrap'), // commented out on 21-3-2025 for fixing error of orders with deleted items and because of no usage
                 'item_id'  => $item->getId()
             ];
         }
