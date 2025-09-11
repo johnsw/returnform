@@ -26,24 +26,17 @@ use Magento\Framework\Mail\Template\TransportBuilderFactory;
 class Returns extends Action
 {
     protected $_pageFactory;
-
     protected $formKeyValidator;
-
     protected $scopeConfig;
-
     protected $inlineTranslation;
-
     protected $transportBuilder;
-
     protected $storeManager;
-
     protected $messageManager;
-
     protected $return;
-
     protected $uploaderFactory;
     protected $adapterFactory;
     protected $filesystem;
+    protected $transportBuilderFactory;
 
     public function __construct(
         Context $context,
