@@ -2,7 +2,7 @@
     "name": "stonewave/module-returnform",
     "description": "Return Form Module",
     "type": "magento2-module",
-    "version": "3.0.5",
+    "version": "3.0.6",
     "license": "proprietary",
     "authors": [
         {
@@ -12,9 +12,6 @@
         }
     ],
     "minimum-stability": "stable",
-    "require": {
-        "php": "^8.3"
-    },
     "autoload": {
         "files": [
             "registration.php"
