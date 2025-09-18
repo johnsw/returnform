@@ -20,6 +20,10 @@ class Returns extends \Magento\Framework\View\Element\Template
 
     public function getReason(){
         $sources_raw = $this->scopeConfig->getValue('return_form_configuration/settings/reason', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        
+        if (empty($sources_raw))
+            return [];
+
         $reason = json_decode($sources_raw,true);
         return $reason;
     }

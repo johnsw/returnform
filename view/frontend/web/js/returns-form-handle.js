@@ -44,7 +44,6 @@ require(
                 processData: false, //add this
                 contentType: false, //and this
                 success: function(data,status,xhr){
-                    console.log(dataForm);
                     dataForm[0].reset();
                     if (data.success) {
                         $('.returns-form').hide();    

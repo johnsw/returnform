@@ -38,6 +38,8 @@ class Returns extends Action
     protected $filesystem;
     protected $transportBuilderFactory;
 
+    protected $allowed_extentions = ['jpg', 'png','jpeg'];
+
     public function __construct(
         Context $context,
         PageFactory $pageFactory,
@@ -81,6 +83,12 @@ class Returns extends Action
         
         $fileup = $this->getRequest()->getFiles('file-cv-input');
         $File_upoad = '';
+
+        $errors = $this->validatePost($params, $fileup);
+        if(!empty($errors)){
+            $response= ['success' => false, 'error' => __(implode('\r', $errors))];
+            return $this->redirectBack($response);
+        }
 
         try {
             $uploaderFactory = $this->uploaderFactory->create(['fileId' => 'file-cv-input']); 
@@ -161,7 +169,7 @@ class Returns extends Action
             $response = ['success' => true, 'data' => [ 'redirect' => $url ]];
         } catch (\Exception $e) {
             echo $e->getMessage();die;
-            $response= ['success' => false, 'Error' => __('Something went wrong. Please try again later.')];
+            $response= ['success' => false, 'error' => __('Something went wrong. Please try again later.')];
         }
 
         return $this->redirectBack($response);
@@ -228,5 +236,105 @@ class Returns extends Action
         $resultJson->setData($data);
         return $resultJson;
     }
+
+    protected function validatePost($post = [], $files = [])
+    {
+		$errors = [];
+
+		if(!empty($post)){
+			if (empty($post['order_id']))
+				$errors[] = __('The Order Id is missing.');
+
+            if (empty($post['name']))
+				$errors[] = __('The Full Name is missing.');
+
+            if (empty($post['phone']))
+				$errors[] = __('The Phone is missing.');
+
+            if (empty($post['reason']))
+				$errors[] = __('The Reason is missing.');
+		}
+
+        if(!empty($files)){
+			foreach ($files as $file) {
+				
+				if(empty($file['name']))
+					continue;
+
+				$path = $file['name'];
+				$ext = pathinfo($path, PATHINFO_EXTENSION);
+	
+				if(!empty($file['error']))
+					$errors[] = $this->getFileError($file['error']);
+	
+				if(!in_array($ext, $this->allowed_extentions))
+					$errors[] = __('Allowed file extentions are ').implode(', ', $this->allowed_extentions);
+			}
+		}
+
+		return $errors;
+	}
+
+    protected function getFileError($code)
+    {
+
+        $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/jobs.log');
+        $logger = new \Zend_Log();
+        $logger->addWriter($writer);
+        $logger->info('=== File Code Error ===');
+        $logger->info($code);
+
+		$error = '';
+		switch($code){
+			case 0: 
+				$error = 'There is no error, the file uploaded with success';
+			break;
+			case 1:
+				/**
+				 * 'The uploaded file exceeds the upload_max_filesize directive in php.ini'
+				 */
+				$error = __('The uploaded file exceeds the maximum file size');
+			break;
+			case 2:
+				/**
+				 * 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form'
+				 */
+				$error = __('The uploaded file exceeds the maximum file size');
+			break;
+			case 3: 
+				/**
+				 * 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form'
+				 */
+				$error = __('The uploaded file was only partially uploaded');
+			break;
+			case 4:
+				/**
+				 * No file was uploaded
+				 */ 
+				$error = __('An error occurred while processing your form. Please try again later.');
+			break;
+			case 6: 
+				/**
+				 * Missing a temporary folder
+				 */ 
+				$error = __('An error occurred while processing your form. Please try again later.');
+			break;
+			case 7: 
+				/**
+				 * Failed to write file to disk.
+				 */ 
+				$error = __('An error occurred while processing your form. Please try again later.');
+			break;
+			case 8: 
+				/**
+				 * A PHP extension stopped the file upload.
+				 */ 
+				$error = __('An error occurred while processing your form. Please try again later.');
+			break;
+			default:
+				$error = 'Unknown file error';
+		}
+		return $error;
+	}
 
 }
