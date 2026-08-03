@@ -24,3 +24,6 @@
 "The Order Id is missing.","O Αριθμός Παραγγελίας απουσιάζει."
 "The Full Name is missing.","To Ονoματεπώνυμο απουσιάζει."
 "The Phone is missing.","To Τηλέφωνο απουσιάζει."
+"The image filename is not Linux-compatible. Please use only English letters, numbers, dots, hyphens, and underscores.","Το όνομα του αρχείου εικόνας δεν είναι συμβατό με Linux. Χρησιμοποιήστε μόνο αγγλικούς χαρακτήρες, αριθμούς, τελείες, παύλες και κάτω παύλες."
+"Allowed file extensions are: %1.","Επιτρεπόμενες επεκτάσεις αρχείων: %1."
+"The image could not be uploaded. Please try again.","Δεν ήταν δυνατή η μεταφόρτωση της εικόνας. Παρακαλώ δοκιμάστε ξανά."

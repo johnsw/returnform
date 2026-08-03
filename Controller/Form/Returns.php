@@ -25,6 +25,9 @@ use Magento\Framework\Mail\Template\TransportBuilderFactory;
 
 class Returns extends Action
 {
+    private const MAX_FILE_NAME_LENGTH = 255;
+    private const LINUX_SAFE_FILE_NAME_PATTERN = '/\A[A-Za-z0-9_-][A-Za-z0-9._-]*\z/D';
+
     protected $_pageFactory;
     protected $formKeyValidator;
     protected $scopeConfig;
@@ -38,7 +41,7 @@ class Returns extends Action
     protected $filesystem;
     protected $transportBuilderFactory;
 
-    protected $allowed_extentions = ['jpg', 'png','jpeg'];
+    protected $allowed_extentions = ['jpg', 'png', 'jpeg'];
 
     public function __construct(
         Context $context,
@@ -83,6 +86,7 @@ class Returns extends Action
         
         $fileup = $this->getRequest()->getFiles('file-cv-input');
         $File_upoad = '';
+        $uploadedFile = [];
 
         $errors = $this->validatePost($params, $fileup);
         if(!empty($errors)){
@@ -90,24 +94,27 @@ class Returns extends Action
             return $this->redirectBack($response);
         }
 
-        try {
-            $uploaderFactory = $this->uploaderFactory->create(['fileId' => 'file-cv-input']); 
-            $uploaderFactory->setAllowedExtensions(['jpg', 'png','jpeg']); // you can add more extension which need
-            $fileAdapter = $this->adapterFactory->create();
-            $uploaderFactory->setAllowRenameFiles(true);
-            // $uploaderFactory->setFilesDispersion(true);
-            $mediaDirectory = $this->filesystem->getDirectoryRead(DirectoryList::MEDIA);
-            $destinationPath = $mediaDirectory->getAbsolutePath('RMA');
-            $result = $uploaderFactory->save($destinationPath);
-            if (!$result) {
-                throw new LocalizedException(
-                    __('File cannot be saved to path: $1', $destinationPath)
-                );
+        if ($this->hasFileToUpload($fileup)) {
+            try {
+                $uploaderFactory = $this->uploaderFactory->create(['fileId' => 'file-cv-input']);
+                $uploaderFactory->setAllowedExtensions($this->allowed_extentions);
+                $uploaderFactory->setAllowRenameFiles(true);
+                $mediaDirectory = $this->filesystem->getDirectoryRead(DirectoryList::MEDIA);
+                $destinationPath = $mediaDirectory->getAbsolutePath('RMA');
+                $uploadedFile = $uploaderFactory->save($destinationPath);
+                if (!$uploadedFile) {
+                    throw new LocalizedException(
+                        __('The image could not be saved.')
+                    );
+                }
+                $File_upoad = $uploadedFile['file'];
+            } catch (\Exception $e) {
+                $response = [
+                    'success' => false,
+                    'error' => __('The image could not be uploaded. Please try again.')
+                ];
+                return $this->redirectBack($response);
             }
-            // save file name 
-            $File_upoad = $result['file'];
-        }  catch (\Exception $e) {
-            $this->messageManager->addError(__('File not Uplaoded, Please try Agrain'));
         }
 
         if( array_key_exists('products',$params) ){
@@ -164,7 +171,7 @@ class Returns extends Action
                 ]
             ];
 
-            $this->sendEmail($data,$fileup);
+            $this->sendEmail($data, $uploadedFile);
 
             $response = ['success' => true, 'data' => [ 'redirect' => $url ]];
         } catch (\Exception $e) {
@@ -200,15 +207,17 @@ class Returns extends Action
         $transport = $transportBuilder->getTransport();
 
 
-        if(!empty($files) && $files['name'] != '' ){
+        if (!empty($files['file'])) {
             $body = $transport->getMessage()->getBody();
             if ($body instanceof MimeMessage) {
                 $parts = $body->getParts();
+                $mediaDirectory = $this->filesystem->getDirectoryRead(DirectoryList::MEDIA);
+                $savedFileName = $files['file'];
 
                 $attachmentPart = new MimePart();
-                $attachmentPart->setContent(file_get_contents( $this->filesystem->getDirectoryRead(DirectoryList::MEDIA)->getAbsolutePath('RMA').'/'.$files['name']))
+                $attachmentPart->setContent($mediaDirectory->readFile('RMA/' . $savedFileName))
                     ->setType($files['type'])
-                    ->setFileName($files['name'])
+                    ->setFileName($savedFileName)
                     ->setDisposition(MimeType::DISPOSITION_ATTACHMENT)
                     ->setEncoding(MimeType::ENCODING_BASE64);
                 $parts[] = $attachmentPart;
@@ -255,25 +264,56 @@ class Returns extends Action
 				$errors[] = __('The Reason is missing.');
 		}
 
-        if(!empty($files)){
-			foreach ($files as $file) {
-				
-				if(empty($file['name']))
-					continue;
+        if ($this->hasFileToUpload($files)) {
+            $fileName = (string)$files['name'];
+            $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
-				$path = $file['name'];
-				$ext = pathinfo($path, PATHINFO_EXTENSION);
-	
-				if(!empty($file['error']))
-					$errors[] = $this->getFileError($file['error']);
-	
-				if(!in_array($ext, $this->allowed_extentions))
-					$errors[] = __('Allowed file extentions are ').implode(', ', $this->allowed_extentions);
-			}
-		}
+            if (!empty($files['error'])) {
+                $errors[] = $this->getFileError($files['error']);
+            }
+
+            if (!$this->isLinuxSafeFileName($fileName)) {
+                $errors[] = __(
+                    'The image filename is not Linux-compatible. '
+                    . 'Please use only English letters, numbers, dots, hyphens, and underscores.'
+                );
+            }
+
+            if (!in_array($extension, $this->allowed_extentions, true)) {
+                $errors[] = __(
+                    'Allowed file extensions are: %1.',
+                    implode(', ', $this->allowed_extentions)
+                );
+            }
+        }
 
 		return $errors;
 	}
+
+    /**
+     * Check whether the optional upload field contains a selected file.
+     *
+     * @param mixed $file
+     * @return bool
+     */
+    private function hasFileToUpload($file)
+    {
+        return is_array($file)
+            && !empty($file['name'])
+            && (int)($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_NO_FILE;
+    }
+
+    /**
+     * Validate a portable filename that can be stored unchanged on Linux.
+     *
+     * @param string $fileName
+     * @return bool
+     */
+    private function isLinuxSafeFileName($fileName)
+    {
+        return strlen($fileName) <= self::MAX_FILE_NAME_LENGTH
+            && preg_match(self::LINUX_SAFE_FILE_NAME_PATTERN, $fileName) === 1;
+    }
 
     protected function getFileError($code)
     {
