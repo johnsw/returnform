@@ -10,9 +10,9 @@
         <column xsi:type="varchar" name="reason"  nullable="true" length="255" comment="Return Reason"/>
         <!-- <column xsi:type="varchar" name="action"  nullable="true" length="255" comment="Return action"/> -->
 
-        <column xsi:type="varchar" name="commend"  nullable="true" length="255"/>
-        <column xsi:type="varchar" name="commend2"  nullable="true" length="255"/>
-        <column xsi:type="varchar" name="curier_commend"  nullable="true" length="255"/>
+        <column xsi:type="varchar" name="comment"  nullable="true" length="255"/>
+        <column xsi:type="varchar" name="comment2"  nullable="true" length="255"/>
+        <column xsi:type="varchar" name="courier_comment"  nullable="true" length="255"/>
 
         <column xsi:type="varchar" name="products"  nullable="true" length="255"/>
         <column xsi:type="varchar" name="money_return"  nullable="true" length="255"/>

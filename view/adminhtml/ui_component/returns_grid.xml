@@ -110,18 +110,18 @@
                 <label translate="true">Reason</label>
             </settings>
         </column>
-                <column name="commend">
+        <column name="comment">
             <settings>
                 <filter>text</filter>
                 <bodyTmpl>ui/grid/cells/text</bodyTmpl>
-                <label translate="true">Commend</label>
+                <label translate="true">Comment</label>
             </settings>
         </column>
-        <column name="commend2">
+        <column name="comment2">
             <settings>
                 <filter>text</filter>
                 <bodyTmpl>ui/grid/cells/text</bodyTmpl>
-                <label translate="true">Curier Commend</label>
+                <label translate="true">Courier Comment</label>
             </settings>
         </column>
         <column name="products">

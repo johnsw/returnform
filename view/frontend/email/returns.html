@@ -1,47 +1,41 @@
-<!--@subject Returns Form @-->
+<!--@subject {{trans "Returns Form"}} @-->
+<!--@vars {
+"var email":"Email",
+"var order_id":"Order ID",
+"var name":"Name",
+"var telephone":"Telephone",
+"var reason":"Return reason",
+"var comment":"Comment",
+"var comment2":"Comment for courier",
+"var money_return_infos|raw":"Money return info"
+} @-->
 
 {{template config_path="design/email/header_template"}}
 
 <table>
     <tr class="email-intro">
-        <td>
-            Email: {{var email}}
-        </td>
+        <td>{{trans "Email: %email" email=$email}}</td>
     </tr>
     <tr>
-        <td>
-            Order id: {{var order_id}}
-        </td>
+        <td>{{trans "Order id: %order_id" order_id=$order_id}}</td>
     </tr>
     <tr>
-        <td>
-            Name: {{var name}}
-        </td>
+        <td>{{trans "Name: %name" name=$name}}</td>
     </tr>
     <tr>
-        <td>
-            Telephone: {{var telephone}}
-        </td>
+        <td>{{trans "Telephone: %telephone" telephone=$telephone}}</td>
     </tr>
     <tr>
-        <td>
-            Return reason: {{var reason}}
-        </td>
+        <td>{{trans "Return reason: %reason" reason=$reason}}</td>
     </tr>
     <tr>
-        <td>
-            Comment: {{var comment}}
-        </td>
+        <td>{{trans "Comment: %comment" comment=$comment}}</td>
     </tr>
     <tr>
-        <td>
-            Comment for curier: {{var comment}}
-        </td>
+        <td>{{trans "Comment for courier: %comment2" comment2=$comment2}}</td>
     </tr>
     <tr>
-        <td>
-            {{var money_return_infos}}
-        </td>
+        <td>{{var money_return_infos|raw}}</td>
     </tr>
 </table>
 
